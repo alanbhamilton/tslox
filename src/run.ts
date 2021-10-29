@@ -20,10 +20,10 @@ export function runPrompt() {
 
   rl.on('line', line => {
     run(line)
-    process.stdout.write('> ')
+    process.stdout.write('\n> ')
   })
 
-  rl.on('close', () => console.log('exiting lox'))
+  rl.on('close', () => console.log('bye ;)'))
 }
 
 export function run(source: string): boolean {
