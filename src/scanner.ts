@@ -72,9 +72,30 @@ export default class Scanner {
       // String Literals
       case '"': this.string(); break
       default:
-        this.errors.push([this.line, `Unexpected character: ${c}`])
+        if (this.isDigit(c)) {
+          this.number()
+        } else {
+          this.errors.push([this.line, `Unexpected character: ${c}`])
+        }
         break
     }
+  }
+
+  private number() {
+    while (this.isDigit(this.peek())) this.advance()
+
+    // Look for a fractional part.
+    if (this.peek() === '.' && this.isDigit(this.peekNext())) {
+      // Consume the "."
+      this.advance()
+
+      while (this.isDigit(this.peek())) this.advance()
+    }
+
+    this.addTokenLiteral(
+      TT.NUMBER,
+      parseFloat(this.source.substring(this.start, this.current))
+    )
   }
 
   private string() {
@@ -108,6 +129,15 @@ export default class Scanner {
   private peek(): string {
     if (this.isAtEnd()) return '\0'
     return this.source.charAt(this.current)
+  }
+
+  private peekNext(): string {
+    if (this.current + 1 >= this.source.length) return '\0'
+    return this.source.charAt(this.current + 1);
+  }
+
+  private isDigit(c: string): boolean {
+    return c >= '0' && c <= '9'
   }
 
   private isAtEnd(): boolean {
