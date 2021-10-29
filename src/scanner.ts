@@ -3,6 +3,25 @@ import { TokenType as TT, Literal } from './types'
 
 type ScanError = [line: number, message: string]
 
+const keywords: Map<string, TT> = new Map([
+  ['and',    TT.AND],
+  ['class',  TT.CLASS],
+  ['else',   TT.ELSE],
+  ['false',  TT.FALSE],
+  ['for',    TT.FOR],
+  ['fun',    TT.FUN],
+  ['if',     TT.IF],
+  ['nil',    TT.NIL],
+  ['or',     TT.OR],
+  ['print',  TT.PRINT],
+  ['return', TT.RETURN],
+  ['super',  TT.SUPER],
+  ['this',   TT.THIS],
+  ['true',   TT.TRUE],
+  ['var',    TT.VAR],
+  ['while',  TT.WHILE]
+])
+
 export default class Scanner {
   source: string
   tokens: Token[] = []
@@ -74,11 +93,22 @@ export default class Scanner {
       default:
         if (this.isDigit(c)) {
           this.number()
+        } else if (this.isAlpha(c)) {
+          this.identifier()
         } else {
           this.errors.push([this.line, `Unexpected character: ${c}`])
         }
         break
     }
+  }
+
+  private identifier() {
+    while (this.isAlphaNumeric(this.peek())) this.advance()
+
+    const text: string = this.source.substring(this.start, this.current)
+    let type: TT | undefined = keywords.get(text)
+    if (type === undefined) type = TT.IDENTIFIER
+    this.addToken(type)
   }
 
   private number() {
@@ -134,6 +164,16 @@ export default class Scanner {
   private peekNext(): string {
     if (this.current + 1 >= this.source.length) return '\0'
     return this.source.charAt(this.current + 1);
+  }
+
+  private isAlpha(c: string): boolean {
+    return (c >= 'a' && c <= 'z') ||
+           (c >= 'A' && c <= 'Z') ||
+            c === '_'
+  }
+
+  private isAlphaNumeric(c: string): boolean {
+    return this.isAlpha(c) || this.isDigit(c)
   }
 
   private isDigit(c: string): boolean {
