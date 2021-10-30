@@ -151,19 +151,25 @@ export default class Scanner {
   }
 
   private blockComment() {
-    while (!(this.peek() === '*' && this.peekNext() === '/') && !this.isAtEnd()) {
-      if (this.peek() === '\n') this.line++
-      this.advance()
+    let blockOpeningLines = [this.line]
+
+    while (blockOpeningLines.length > 0 && !this.isAtEnd()) {
+      const c = this.advance()
+      switch (c) {
+        case '\n': this.line++; break
+        case '/':
+          if (this.match('*')) blockOpeningLines.push(this.line)
+          break
+        case '*':
+          if (this.match('/')) blockOpeningLines.pop()
+          break
+      }
     }
 
-    if (this.isAtEnd()) {
-      this.errors.push([this.line, 'Unterminated block quote.'])
+    if (this.isAtEnd() && blockOpeningLines.length > 0) {
+      blockOpeningLines.forEach(line => this.errors.push([line, 'Unterminated block quote.']))
       return
     }
-
-    // The closing */.
-    this.advance()
-    this.advance()
   }
 
   private match(expected: string): boolean {
