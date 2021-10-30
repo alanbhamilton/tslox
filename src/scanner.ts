@@ -76,6 +76,8 @@ export default class Scanner {
         if (this.match('/')) {
           // A comment goes until the end of the line.
           while (this.peek() !== '\n' && !this.isAtEnd()) this.advance()
+        } else if (this.match('*')) {
+          this.blockComment()
         } else {
           this.addToken(TT.SLASH)
         }
@@ -146,6 +148,22 @@ export default class Scanner {
     // Trim the surrounding quotes.
     const value: string = this.source.substring(this.start + 1, this.current - 1)
     this.addTokenLiteral(TT.STRING, value)
+  }
+
+  private blockComment() {
+    while (!(this.peek() === '*' && this.peekNext() === '/') && !this.isAtEnd()) {
+      if (this.peek() === '\n') this.line++
+      this.advance()
+    }
+
+    if (this.isAtEnd()) {
+      this.errors.push([this.line, 'Unterminated block quote.'])
+      return
+    }
+
+    // The closing */.
+    this.advance()
+    this.advance()
   }
 
   private match(expected: string): boolean {
