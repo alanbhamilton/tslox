@@ -1,4 +1,4 @@
-import { TokenType, Literal } from './types'
+import { TokenType, tokenTypeNames, Literal } from './types'
 
 export default class Token {
   type: TokenType
@@ -14,6 +14,6 @@ export default class Token {
   }
 
   public toString(): string {
-    return this.type + " " + this.lexeme + " " + this.literal;
+    return tokenTypeNames.get(this.type) + " " + this.lexeme + " " + this.literal;
   }
 }
