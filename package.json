@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lox": "ts-node src/lox.ts"
+    "lox": "ts-node src/lox.ts",
+    "gen-ast": "ts-node tools/generate-ast.ts src"
   },
   "author": "",
   "license": "ISC",
