@@ -1,12 +1,12 @@
-import { TokenType, tokenTypeNames, Literal } from './types'
+import { TokenType, tokenTypeNames, LiteralObj } from './types'
 
 export default class Token {
   type: TokenType
   lexeme: string
-  literal: Literal
+  literal: LiteralObj
   line: number
 
-  constructor(type: TokenType, lexeme: string, literal: Literal | null, line: number) {
+  constructor(type: TokenType, lexeme: string, literal: LiteralObj | null, line: number) {
       this.type = type
       this.lexeme = lexeme
       this.literal = literal

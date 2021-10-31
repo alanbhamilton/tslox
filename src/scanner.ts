@@ -1,5 +1,5 @@
 import Token from './token'
-import { TokenType as TT, Literal } from './types'
+import { TokenType as TT, LiteralObj } from './types'
 
 type ScanError = [line: number, message: string]
 
@@ -216,7 +216,7 @@ export default class Scanner {
     this.addTokenLiteral(type, null)
   }
 
-  private addTokenLiteral(type: TT, literal: Literal) {
+  private addTokenLiteral(type: TT, literal: LiteralObj) {
     const text: string = this.source.substring(this.start, this.current)
     this.tokens.push(new Token(type, text, literal, this.line))
   }

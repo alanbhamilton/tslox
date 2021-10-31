@@ -61,4 +61,4 @@ export const tokenTypeNames = new Map([
   [TokenType.EOF, 'EndOfFile']
 ])
 
-export type Literal = number | string | null
+export type LiteralObj = number | string | null
