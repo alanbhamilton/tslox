@@ -20,7 +20,6 @@ export const enum TokenType {
   EOF
 }
 
-export const tokenTypeNames = new Map([
 export const tokenTypeNames: Map<TokenType, string> = new Map([
   [TokenType.LEFT_PAREN, 'LeftParen'],
   [TokenType.RIGHT_PAREN, 'RightParen'],
