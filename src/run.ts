@@ -3,6 +3,7 @@ import readline from 'readline'
 import Scanner from './scanner'
 import Token from './token'
 import { error } from './error'
+import AstPrinter from './astPrinter'
 
 export function runFile(filePath: string) {
   const hadError = run(readFileSync(filePath, 'utf-8'))

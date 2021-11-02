@@ -1,6 +1,6 @@
 import * as Expr from '../src/expr'
 import { Token, TokenType } from '../src/types'
-import { AstPrinter } from '../src/astPrinter'
+import AstPrinter from '../src/astPrinter'
 
 
 const expression = new Expr.Binary(

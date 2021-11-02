@@ -1,6 +1,6 @@
 import * as Expr from './expr'
 
-export class AstPrinter implements Expr.IVisitor<String> {
+export default class AstPrinter implements Expr.IVisitor<String> {
   print(expr: Expr.Expr): string {
     return expr.accept(this)
   }
