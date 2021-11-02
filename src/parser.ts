@@ -10,7 +10,7 @@ import * as Expr from './expr'
 // grouping       → "(" expression ")" ;
 // unary          → ( "-" | "!" ) expression ;
 // binary         → expression operator expression ;
-// ternary        → expression "?" expression ":" expresseion ;
+// ternary        → expression "?" expression ":" expression ;
 // operator       → "==" | "!=" | "<" | "<=" | ">" | ">="
 //                | "+"  | "-"  | "*" | "/" ;
 
