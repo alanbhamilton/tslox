@@ -2,8 +2,10 @@ import { readFileSync } from 'fs'
 import readline from 'readline'
 import Scanner from './scanner'
 import Token from './token'
-import { error } from './error'
+import Parser from './parser'
+import * as Expr from './expr'
 import AstPrinter from './astPrinter'
+import { error, parserError } from './error'
 
 export function runFile(filePath: string) {
   const hadError = run(readFileSync(filePath, 'utf-8'))
@@ -30,11 +32,15 @@ export function runPrompt() {
 export function run(source: string): boolean {
   const scanner = new Scanner(source)
   const tokens: Token[] = scanner.scanTokens()
+  const parser: Parser = new Parser(tokens)
+  const expression: Expr.Expr | null = parser.parse()
 
-  if (scanner.errors.length > 0) {
+  if (scanner.hadError || parser.hadError || expression === null) {
     scanner.errors.forEach(err => error(...err))
+    parser.errors.forEach(err => parserError(...err))
     return true
   }
-  tokens.forEach(token => console.log(token.toString()))
+
+  console.log(new AstPrinter().print(expression))
   return false
 }

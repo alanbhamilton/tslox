@@ -45,6 +45,10 @@ export default class Scanner {
     return this.tokens
   }
 
+  get hadError(): boolean {
+    return this.errors.length > 0
+  }
+
   private scanToken() {
     const c = this.advance()
 
