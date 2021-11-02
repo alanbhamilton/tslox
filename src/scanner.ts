@@ -1,7 +1,7 @@
 import Token from './token'
 import { TokenType as TT, LiteralObj } from './types'
 
-type ScanError = [line: number, message: string]
+type ScanError = [line: number, column: number, message: string]
 
 const keywords: Map<string, TT> = new Map([
   ['and',    TT.AND],
@@ -41,7 +41,7 @@ export default class Scanner {
       this.scanToken()
     }
 
-    this.tokens.push(new Token(TT.EOF, '', null, this.line))
+    this.tokens.push(new Token(TT.EOF, '', null, this.line, this.current + 1))
     return this.tokens
   }
 
@@ -104,7 +104,7 @@ export default class Scanner {
         } else if (this.isAlpha(c)) {
           this.identifier()
         } else {
-          this.errors.push([this.line, `Unexpected character: ${c}`])
+          this.errors.push([this.line, this.current, `Unexpected character: ${c}`])
         }
         break
     }
@@ -144,7 +144,7 @@ export default class Scanner {
 
     if (this.isAtEnd()) {
       // Lox.error(line, "Unterminated string.");
-      this.errors.push([this.line, 'Unterminated string.'])
+      this.errors.push([this.line, this.current, 'Unterminated string.'])
       return
     }
 
@@ -173,7 +173,7 @@ export default class Scanner {
     }
 
     if (this.isAtEnd() && blockOpeningLines.length > 0) {
-      blockOpeningLines.forEach(line => this.errors.push([line, 'Unterminated block quote.']))
+      blockOpeningLines.forEach(line => this.errors.push([line, this.current + 1, 'Unterminated block quote.']))
       return
     }
   }
@@ -224,6 +224,6 @@ export default class Scanner {
 
   private addTokenLiteral(type: TT, literal: LiteralObj) {
     const text: string = this.source.substring(this.start, this.current)
-    this.tokens.push(new Token(type, text, literal, this.line))
+    this.tokens.push(new Token(type, text, literal, this.line, this.start + 1))
   }
 }
