@@ -68,6 +68,12 @@ export default class Parser {
   }
 
   private comparison(): Expr.Expr {
+    if  (this.match(TT.GREATER, TT.GREATER_EQUAL, TT.LESS, TT.LESS_EQUAL)) {
+      const operator: Token = this.previous()
+      this.term() // Discard operand
+      throw this.error(operator, "Missing left operand.")
+    }
+
     let expr: Expr.Expr = this.term()
 
     while (this.match(TT.GREATER, TT.GREATER_EQUAL, TT.LESS, TT.LESS_EQUAL)) {
@@ -80,6 +86,12 @@ export default class Parser {
   }
 
   private term(): Expr.Expr {
+    if (this.match(TT.PLUS)) {
+      const operator: Token = this.previous()
+      this.factor() // Discard operand
+      throw this.error(operator, "Missing left operand.")
+    }
+
     let expr: Expr.Expr = this.factor()
 
     while (this.match(TT.MINUS, TT.PLUS)) {
@@ -92,6 +104,12 @@ export default class Parser {
   }
 
   private factor(): Expr.Expr {
+    if (this.match(TT.SLASH, TT.STAR)) {
+      const operator: Token = this.previous()
+      this.unary() // Discard operand
+      throw this.error(operator, "Missing left operand.")
+    }
+
     let expr: Expr.Expr = this.unary()
 
     while (this.match(TT.SLASH, TT.STAR)) {
@@ -129,7 +147,7 @@ export default class Parser {
       return new Expr.Grouping(expr)
     }
 
-    throw this.error(this.peek(), "Expect expression.");
+    throw this.error(this.peek(), "Expect expression.")
   }
 
   // ---------- Helper Methods ----------
