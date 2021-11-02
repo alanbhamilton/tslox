@@ -1,6 +1,20 @@
 import { Token, TokenType as TT } from "./types"
 import * as Expr from './expr'
 
+// expression     → literal
+//                | unary
+//                | binary
+//                | grouping ;
+
+// literal        → NUMBER | STRING | "true" | "false" | "nil" ;
+// grouping       → "(" expression ")" ;
+// unary          → ( "-" | "!" ) expression ;
+// binary         → expression operator expression ;
+// ternary        → expression "?" expression ":" expresseion ;
+// operator       → "==" | "!=" | "<" | "<=" | ">" | ">="
+//                | "+"  | "-"  | "*" | "/" ;
+
+
 type ParserError = [token: Token, message: string]
 
 class ParseError extends Error {}
@@ -29,12 +43,25 @@ export default class Parser {
   }
 
   private equality(): Expr.Expr {
-    let expr: Expr.Expr = this.comparison()
+    let expr: Expr.Expr = this.ternary()
 
     while (this.match(TT.BANG_EQUAL, TT.EQUAL_EQUAL)) {
       const operator: Token = this.previous()
       const right: Expr.Expr = this.comparison()
       expr = new Expr.Binary(expr, operator, right)
+    }
+
+    return expr
+  }
+
+  private ternary(): Expr.Expr {
+    const expr: Expr.Expr = this.comparison()
+
+    if (this.match(TT.QUESTION)) {
+      const truthy: Expr.Expr = this.expression()
+      this.consume(TT.COLON, "Expect ':' after truthy expression")
+      const falsy: Expr.Expr = this.expression()
+      return new Expr.Ternary(expr, truthy, falsy)
     }
 
     return expr

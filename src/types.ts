@@ -2,6 +2,7 @@ export const enum TokenType {
   // Single-character tokens.
   LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
   COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+  QUESTION, COLON,
 
   // One or two character tokens.
   BANG, BANG_EQUAL,
@@ -31,6 +32,9 @@ export const tokenTypeNames = new Map([
   [TokenType.SEMICOLON, 'Semicolon'],
   [TokenType.SLASH, 'Slash'],
   [TokenType.STAR, 'Star'],
+  [TokenType.QUESTION, 'Question'],
+  [TokenType.COLON, 'Colon'],
+
   [TokenType.BANG, 'Bang'],
   [TokenType.BANG_EQUAL, 'BangEqual'],
   [TokenType.EQUAL, 'Equal'],
@@ -39,9 +43,11 @@ export const tokenTypeNames = new Map([
   [TokenType.GREATER_EQUAL, 'GreaterEqual'],
   [TokenType.LESS, 'Less'],
   [TokenType.LESS_EQUAL, 'LessEqual'],
+
   [TokenType.IDENTIFIER, 'Identifier'],
   [TokenType.STRING, 'String'],
   [TokenType.NUMBER, 'Number'],
+
   [TokenType.AND, 'And'],
   [TokenType.CLASS, 'Class'],
   [TokenType.ELSE, 'Else'],
@@ -58,6 +64,7 @@ export const tokenTypeNames = new Map([
   [TokenType.TRUE, 'True'],
   [TokenType.VAR, 'Var'],
   [TokenType.WHILE, 'While'],
+
   [TokenType.EOF, 'EndOfFile']
 ])
 

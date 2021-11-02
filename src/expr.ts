@@ -8,6 +8,7 @@ export interface IVisitor<R> {
   visitGroupingExpr(expr: Grouping): R
   visitLiteralExpr(expr: Literal): R
   visitUnaryExpr(expr: Unary): R
+  visitTernaryExpr(expr: Ternary): R
 }
 
 export abstract class Expr {
@@ -67,3 +68,20 @@ export class Unary implements Expr {
     return visitor.visitUnaryExpr(this)
   }
 }
+
+export class Ternary implements Expr {
+  public cond: Expr
+  public truthy: Expr
+  public falsy: Expr
+
+  constructor(cond: Expr, truthy: Expr, falsy: Expr) {
+    this.cond = cond
+    this.truthy = truthy
+    this.falsy = falsy
+  }
+
+  accept<R>(visitor: IVisitor<R>): R {
+    return visitor.visitTernaryExpr(this)
+  }
+}
+

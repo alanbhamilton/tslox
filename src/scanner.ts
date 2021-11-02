@@ -63,6 +63,8 @@ export default class Scanner {
       case '+': this.addToken(TT.PLUS); break
       case ';': this.addToken(TT.SEMICOLON); break
       case '*': this.addToken(TT.STAR); break
+      case '?': this.addToken(TT.QUESTION); break
+      case ':': this.addToken(TT.COLON); break
       case '!':
         this.addToken(this.match('=') ? TT.BANG_EQUAL : TT.BANG)
         break

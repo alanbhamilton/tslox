@@ -22,6 +22,10 @@ export default class AstPrinter implements Expr.IVisitor<String> {
     return this.parenthesize(expr.operator.lexeme, expr.right)
   }
 
+  public visitTernaryExpr(expr: Expr.Ternary): string {
+    return this.parenthesize('?:', expr.cond, expr.truthy, expr.falsy)
+  }
+
   public parenthesize(name: string, ...exprs: Expr.Expr[]) {
     let result = `(${name}`
 

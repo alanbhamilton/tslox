@@ -22,7 +22,8 @@ defineAst(baseName, [
   'Binary   : left Expr, operator Token, right Expr',
   'Grouping : expression Expr',
   'Literal  : value LiteralObj',
-  'Unary    : operator Token, right Expr'
+  'Unary    : operator Token, right Expr',
+  'Ternary  : cond Expr, truthy Expr, falsy Expr'
 ])
 
 writer.end()
