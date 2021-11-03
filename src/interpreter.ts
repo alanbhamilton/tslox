@@ -94,7 +94,10 @@ export default class Interpreter implements Expr.IVisitor<LiteralObj> {
   }
 
   visitTernaryExpr(expr: Expr.Ternary): LiteralObj {
-    throw new Error('Method not implemented.')
+    const cond: LiteralObj = this.evaluate(expr.cond)
+
+    if (this.isTruthy(cond)) return this.evaluate(expr.truthy)
+    return this.evaluate(expr.falsy)
   }
 
   private checkNumberOperand(operator: Token, operand: LiteralObj): void {
