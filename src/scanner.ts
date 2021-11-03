@@ -143,7 +143,7 @@ export default class Scanner {
     }
 
     if (this.isAtEnd()) {
-      // Lox.error(line, "Unterminated string.");
+      // Lox.error(line, "Unterminated string.")
       this.errors.push([this.line, this.current, 'Unterminated string.'])
       return
     }
@@ -180,7 +180,7 @@ export default class Scanner {
 
   private match(expected: string): boolean {
     if (this.isAtEnd()) return false
-    if (this.source.charAt(this.current) != expected) return false;
+    if (this.source.charAt(this.current) != expected) return false
 
     this.current++
     return true

@@ -1,6 +1,6 @@
-import { TokenType } from "./types";
+import { TokenType } from "./types"
 import Token from './token'
-import RuntimeError from "./runtimeError";
+import RuntimeError from "./runtimeError"
 
 export function error(line: number, column: number, message: string) {
   report(line, column, '', message)

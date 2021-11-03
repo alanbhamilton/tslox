@@ -100,6 +100,8 @@ export default class Interpreter implements Expr.IVisitor<LiteralObj> {
     return this.evaluate(expr.falsy)
   }
 
+  // ---------- Helpers ----------
+
   private checkNumberOperand(operator: Token, operand: LiteralObj): void {
     if (typeof operand === 'number') return
     throw new RuntimeError(operator, 'Operand must be a number.')
