@@ -72,6 +72,14 @@ export default class Interpreter implements Expr.IVisitor<LiteralObj> {
           return (left as string) + (right as string)
         }
 
+        if (typeof left === 'string' && typeof right === 'number') {
+          return (left as string) + right.toString()
+        }
+
+        if (typeof left === 'number' && typeof right === 'string') {
+          return left.toString() + (right as string)
+        }
+
         throw new RuntimeError(expr.operator, 'Operands must be two numbers or two strings.')
       case TT.SLASH:
         this.checkNumberOperands(expr.operator, left, right)

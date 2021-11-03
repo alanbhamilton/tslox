@@ -19,6 +19,5 @@ export function parserError(token: Token, message: string): void {
 }
 
 export function runtimeError(error: RuntimeError): void {
-  console.error(error.message)
-  console.error(`[${error.token.line}:${error.token.column}]`)
+  console.error(`[${error.token.line}:${error.token.column}] Runtime Error: ${error.message}`)
 }
