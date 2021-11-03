@@ -12,7 +12,7 @@ import RuntimeError from "./runtimeError"
 const runFromCLI = require.main === module
 
 export default class Lox {
-  static hadParseError = false
+  static hadSyntaxError = false
   static hadRuntimeError = false
 
   public static main(args: string[]) {
@@ -34,7 +34,7 @@ export default class Lox {
   private static runFile(filePath: string) {
     Lox.run(readFileSync(filePath, 'utf-8'))
 
-    if (Lox.hadParseError) process.exit(65)
+    if (Lox.hadSyntaxError) process.exit(65)
     if (Lox.hadRuntimeError) process.exit(70)
   }
 
@@ -61,7 +61,7 @@ export default class Lox {
     const expression: Expr.Expr | null = parser.parse()
     const interpreter: Interpreter = new Interpreter()
 
-    if (Lox.hadParseError || expression === null) return
+    if (Lox.hadSyntaxError || expression === null) return
 
     interpreter.interpret(expression)
 
@@ -70,13 +70,13 @@ export default class Lox {
     console.log(new AstPrinter().print(expression))
   }
 
-  static error(line: number, column: number, message: string) {
-    Lox.report(line, column, '', message)
+  private static report(line: number, column: number, where: string, message: string) {
+    Lox.hadSyntaxError = true
+    console.error(`[${line}:${column}] Error${where}: ${message}`)
   }
 
-  private static report(line: number, column: number, where: string, message: string) {
-    Lox.hadParseError = true
-    console.error(`[${line}:${column}] Error${where}: ${message}`)
+  static scannerError(line: number, column: number, message: string) {
+    Lox.report(line, column, '', message)
   }
 
   static parserError(token: Token, message: string): void {

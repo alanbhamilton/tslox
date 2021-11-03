@@ -98,7 +98,7 @@ export default class Scanner {
         } else if (this.isAlpha(c)) {
           this.identifier()
         } else {
-          Lox.error(this.line, this.current, `Unexpected character: ${c}`)
+          Lox.scannerError(this.line, this.current, `Unexpected character: ${c}`)
         }
         break
     }
@@ -137,7 +137,7 @@ export default class Scanner {
     }
 
     if (this.isAtEnd()) {
-      Lox.error(this.line, this.current, 'Unterminated string.')
+      Lox.scannerError(this.line, this.current, 'Unterminated string.')
       return
     }
 
@@ -167,7 +167,7 @@ export default class Scanner {
 
     if (this.isAtEnd() && blockOpeningLines.length > 0) {
       for (const line in blockOpeningLines) {
-        Lox.error(this.line, this.current + 1, 'Unterminated block quote.')
+        Lox.scannerError(this.line, this.current + 1, 'Unterminated block quote.')
       }
       return
     }
