@@ -1,18 +1,15 @@
 import * as Expr from './expr'
 import { Token, TokenType as TT, LiteralObj } from './types'
 import RuntimeError from './runtimeError'
-import { runtimeError } from './error'
+import Lox from './lox'
 
 export default class Interpreter implements Expr.IVisitor<LiteralObj> {
-  hadRuntimeError = false
-
   interpret(expression: Expr.Expr ): void  {
     try {
       const value: LiteralObj = this.evaluate(expression)
       console.log(this.stringify(value))
     } catch (error) {
-      runtimeError(error as RuntimeError)
-      this.hadRuntimeError = true
+      Lox.runtimeError(error as RuntimeError)
     }
   }
 

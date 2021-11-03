@@ -1,5 +1,6 @@
 import { Token, TokenType as TT } from "./types"
 import * as Expr from './expr'
+import Lox from "./lox"
 
 // expression     → literal
 //                | unary
@@ -14,15 +15,11 @@ import * as Expr from './expr'
 // operator       → "==" | "!=" | "<" | "<=" | ">" | ">="
 //                | "+"  | "-"  | "*" | "/" ;
 
-
-type ParserError = [token: Token, message: string]
-
 class ParseError extends Error {}
 
 export default class Parser {
   private tokens: Token[]
   private current = 0
-  errors: ParserError[] = []
 
   constructor(tokens: Token[]) {
     this.tokens = tokens
@@ -152,10 +149,6 @@ export default class Parser {
 
   // ---------- Helper Methods ----------
 
-  get hadError(): boolean {
-    return this.errors.length > 0
-  }
-
   private match(...types: TT[]): boolean {
     for (const type of types) {
       if (this.check(type)) {
@@ -196,7 +189,7 @@ export default class Parser {
   }
 
   private error(token: Token, message: string): ParseError {
-    this.errors.push([token, message])
+    Lox.parserError(token, message)
     return new ParseError()
   }
 
