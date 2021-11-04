@@ -17,6 +17,16 @@ const astDefinitions = {
       "import Token from './token'",
       "import { LiteralObj } from './types'"
     ]
+  },
+  // Statements
+  Stmt: {
+    types: [
+      'Expression : expression Expr',
+      'Print      : expression Expr'
+    ],
+    importStrings: [
+      "import { Expr } from './expr'"
+    ]
   }
 }
 
@@ -108,6 +118,7 @@ export default class ASTGenerator {
   }
 }
 
+// Run generator if called from CLI
 if (runFromCLI) {
   let args: string[] = process.argv.slice(2)
 
