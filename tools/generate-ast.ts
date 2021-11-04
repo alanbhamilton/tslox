@@ -30,9 +30,11 @@ const astDefinitions = {
   }
 }
 
+type Writer = fs.WriteStream | null
+
 export default class ASTGenerator {
   outputDir: string
-  writer: fs.WriteStream | null = null
+  writer: Writer = null
 
   constructor(outputDir: string) {
     this.outputDir = outputDir
