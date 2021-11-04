@@ -2,6 +2,7 @@ import { TokenType as TT } from "./types"
 import Token from "./token"
 import * as Expr from './expr'
 import Lox from "./lox"
+import { ParseError } from './errors'
 
 // program        → statement* EOF ;
 
@@ -25,7 +26,7 @@ import Lox from "./lox"
 // operator       → "==" | "!=" | "<" | "<=" | ">" | ">="
 //                | "+"  | "-"  | "*" | "/" ;
 
-class ParseError extends Error {}
+
 
 export default class Parser {
   private tokens: Token[]
@@ -200,7 +201,7 @@ export default class Parser {
 
   private error(token: Token, message: string): ParseError {
     Lox.parserError(token, message)
-    return new ParseError()
+    return new ParseError(token, message)
   }
 
   private synchronize(): void {

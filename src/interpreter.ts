@@ -1,7 +1,7 @@
 import * as Expr from './expr'
 import { TokenType as TT, LiteralObj } from './types'
 import Token from './token'
-import RuntimeError from './runtimeError'
+import { RuntimeError } from './errors'
 import Lox from './lox'
 
 export default class Interpreter implements Expr.IVisitor<LiteralObj> {

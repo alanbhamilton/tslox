@@ -7,7 +7,7 @@ import Interpreter from './interpreter'
 import * as Expr from './expr'
 import AstPrinter from './astPrinter'
 import { TokenType } from "./types"
-import RuntimeError from "./runtimeError"
+import { RuntimeError } from "./errors"
 
 const runFromCLI = require.main === module
 

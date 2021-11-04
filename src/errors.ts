@@ -1,6 +1,6 @@
 import Token from './token'
 
-export default class RuntimeError extends Error {
+class BaseError extends Error {
   token: Token
 
   constructor(token: Token, message: string) {
@@ -8,3 +8,7 @@ export default class RuntimeError extends Error {
     this.token = token
   }
 }
+
+export class RuntimeError extends BaseError {}
+
+export class ParseError extends BaseError {}
