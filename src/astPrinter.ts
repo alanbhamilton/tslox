@@ -1,9 +1,22 @@
 import * as Expr from './expr'
+import * as Stmt from './stmt'
 
-export default class AstPrinter implements Expr.IVisitor<String> {
-  print(expr: Expr.Expr): string {
-    return expr.accept(this)
+export default class AstPrinter implements Expr.IVisitor<string>, Stmt.IVisitor<string> {
+  print(statement: Stmt.Stmt): string {
+    return statement.accept(this)
   }
+
+  // ---------- Statement ----------
+
+  public visitExpressionStmt(stmt: Stmt.Expression): string {
+    return this.parenthesize('expr', stmt.expression)
+  }
+
+  public visitPrintStmt(stmt: Stmt.Print): string {
+    return this.parenthesize('print', stmt.expression)
+  }
+
+  // ---------- Expression ----------
 
   public visitBinaryExpr(expr: Expr.Binary ): string {
     return this.parenthesize(expr.operator.lexeme, expr.left, expr.right)

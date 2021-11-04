@@ -1,18 +1,33 @@
 import * as Expr from './expr'
+import * as Stmt from './stmt'
 import { TokenType as TT, LiteralObj } from './types'
 import Token from './token'
 import { RuntimeError } from './errors'
 import Lox from './lox'
 
-export default class Interpreter implements Expr.IVisitor<LiteralObj> {
-  interpret(expression: Expr.Expr ): void  {
+export default class Interpreter implements Expr.IVisitor<LiteralObj>, Stmt.IVisitor<void> {
+  interpret(statements: Stmt.Stmt[] ): void  {
     try {
-      const value: LiteralObj = this.evaluate(expression)
-      console.log(this.stringify(value))
+      for (const statement of statements) {
+        this.execute(statement)
+      }
     } catch (error) {
       Lox.runtimeError(error as RuntimeError)
     }
   }
+
+  // ---------- Statement ----------
+
+  visitExpressionStmt(stmt: Stmt.Expression): void {
+    this.evaluate(stmt.expression)
+  }
+
+  visitPrintStmt(stmt: Stmt.Print): void {
+    const value: LiteralObj = this.evaluate(stmt.expression)
+    console.log(this.stringify(value))
+  }
+
+  // ---------- Expression ----------
 
   public visitLiteralExpr(expr: Expr.Literal): LiteralObj  {
     return expr.value
@@ -113,6 +128,10 @@ export default class Interpreter implements Expr.IVisitor<LiteralObj> {
 
   private evaluate(expr: Expr.Expr) {
     return expr.accept(this)
+  }
+
+  private execute(stmt: Stmt.Stmt): void {
+    stmt.accept(this)
   }
 
   private isTruthy(object: LiteralObj): boolean {

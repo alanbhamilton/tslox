@@ -4,10 +4,10 @@ import Scanner from './scanner'
 import Token from './token'
 import Parser from './parser'
 import Interpreter from './interpreter'
-import * as Expr from './expr'
 import AstPrinter from './astPrinter'
 import { TokenType } from "./types"
 import { RuntimeError } from "./errors"
+import { Stmt } from './stmt'
 
 const runFromCLI = require.main === module
 
@@ -47,7 +47,12 @@ export default class Lox {
     process.stdout.write('> ')
 
     rl.on('line', line => {
-      Lox.run(line)
+      try {
+        Lox.run(line)
+      } catch(error) {
+        this.hadSyntaxError = false
+        this.hadRuntimeError = false
+      }
       process.stdout.write('\n> ')
     })
 
@@ -58,16 +63,19 @@ export default class Lox {
     const scanner = new Scanner(source)
     const tokens: Token[] = scanner.scanTokens()
     const parser: Parser = new Parser(tokens)
-    const expression: Expr.Expr | null = parser.parse()
+    const statements: Stmt[] = parser.parse()
     const interpreter: Interpreter = new Interpreter()
 
-    if (Lox.hadSyntaxError || expression === null) return
+    if (Lox.hadSyntaxError) return
 
-    interpreter.interpret(expression)
+    interpreter.interpret(statements)
 
     if (Lox.hadRuntimeError) return
 
-    console.log(new AstPrinter().print(expression))
+    const printer = new AstPrinter()
+    for (const statement of statements) {
+      console.log(printer.print(statement))
+    }
   }
 
   private static report(line: number, column: number, where: string, message: string) {

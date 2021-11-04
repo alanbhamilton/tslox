@@ -1,7 +1,8 @@
+import Lox from "./lox"
 import { TokenType as TT } from "./types"
 import Token from "./token"
 import * as Expr from './expr'
-import Lox from "./lox"
+import * as Stmt from './stmt'
 import { ParseError } from './errors'
 
 // program        → statement* EOF ;
@@ -36,12 +37,33 @@ export default class Parser {
     this.tokens = tokens
   }
 
-  parse(): Expr.Expr | null {
-    try {
-      return this.expression()
-    } catch (error) {
-      return null
+  parse(): Stmt.Stmt[] {
+    const statements: Stmt.Stmt[] = []
+    while (!this.isAtEnd()) {
+      statements.push(this.statement())
     }
+
+    return statements
+  }
+
+  // ---------- Statement ----------
+
+  private statement(): Stmt.Stmt {
+    if (this.match(TT.PRINT)) return this.printStatement()
+
+    return this.expressionStatement()
+  }
+
+  private printStatement(): Stmt.Stmt {
+    const value: Expr.Expr = this.expression()
+    this.consume(TT.SEMICOLON, "Expect ';' after value.")
+    return new Stmt.Print(value)
+  }
+
+  private expressionStatement(): Stmt.Stmt {
+    const expr: Expr.Expr = this.expression()
+    this.consume(TT.SEMICOLON, "Expect ';' after expression.")
+    return new Stmt.Expression(expr)
   }
 
   // ---------- Expression ----------
