@@ -1,6 +1,16 @@
-import { Token, TokenType as TT } from "./types"
+import { TokenType as TT } from "./types"
+import Token from "./token"
 import * as Expr from './expr'
 import Lox from "./lox"
+
+// program        → statement* EOF ;
+
+// statement      → exprStmt
+//                | printStmt ;
+
+// exprStmt       → expression ";" ;
+// printStmt      → "print" expression ";" ;
+
 
 // expression     → literal
 //                | unary

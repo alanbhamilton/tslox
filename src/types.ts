@@ -69,5 +69,3 @@ export const tokenTypeNames: Map<TokenType, string> = new Map([
 ])
 
 export type LiteralObj = Object | null
-
-export {default as Token} from './token'

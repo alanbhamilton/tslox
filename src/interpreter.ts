@@ -1,5 +1,6 @@
 import * as Expr from './expr'
-import { Token, TokenType as TT, LiteralObj } from './types'
+import { TokenType as TT, LiteralObj } from './types'
+import Token from './token'
 import RuntimeError from './runtimeError'
 import Lox from './lox'
 
