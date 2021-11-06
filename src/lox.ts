@@ -50,6 +50,7 @@ export default class Lox {
       try {
         Lox.run(line)
       } catch(error) {
+        console.error(error)
         this.hadSyntaxError = false
         this.hadRuntimeError = false
       }

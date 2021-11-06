@@ -5,10 +5,16 @@ import * as Expr from './expr'
 import * as Stmt from './stmt'
 import { ParseError } from './errors'
 
-// program        → statement* EOF ;
-
+// program        → declaration* EOF ;
+//
+// declaration    → varDecl
+//                | statement ;
+//
+// varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+//
 // statement      → exprStmt
 //                | printStmt ;
+
 
 // exprStmt       → expression ";" ;
 // printStmt      → "print" expression ";" ;
@@ -19,6 +25,10 @@ import { ParseError } from './errors'
 //                | binary
 //                | grouping ;
 
+// expression     → assignment ;
+// assignment     → IDENTIFIER "=" assignment
+//                | equality ;
+
 // literal        → NUMBER | STRING | "true" | "false" | "nil" ;
 // grouping       → "(" expression ")" ;
 // unary          → ( "-" | "!" ) expression ;
@@ -27,7 +37,10 @@ import { ParseError } from './errors'
 // operator       → "==" | "!=" | "<" | "<=" | ">" | ">="
 //                | "+"  | "-"  | "*" | "/" ;
 
-
+// primary        → "true" | "false" | "nil"
+//                | NUMBER | STRING
+//                | "(" expression ")"
+//                | IDENTIFIER ;
 
 export default class Parser {
   private tokens: Token[]
@@ -38,12 +51,12 @@ export default class Parser {
   }
 
   parse(): Stmt.Stmt[] {
-    const statements: Stmt.Stmt[] = []
+    const statements: (Stmt.Stmt | null)[] = []
     while (!this.isAtEnd()) {
-      statements.push(this.statement())
+      statements.push(this.declaration())
     }
 
-    return statements
+    return statements.filter(s => s !== null) as Stmt.Stmt[]
   }
 
   // ---------- Statement ----------
@@ -60,16 +73,60 @@ export default class Parser {
     return new Stmt.Print(value)
   }
 
+  private varDeclaration(): Stmt.Stmt {
+    const name: Token = this.consume(TT.IDENTIFIER, 'Expect variable name.')
+
+    let initializer: Expr.Expr | null = null
+    if (this.match(TT.EQUAL)) {
+      initializer = this.expression()
+    }
+
+    this.consume(TT.SEMICOLON, "Expect ';' after variable declaration.")
+    return new Stmt.Var(name, initializer)
+  }
+
   private expressionStatement(): Stmt.Stmt {
     const expr: Expr.Expr = this.expression()
     this.consume(TT.SEMICOLON, "Expect ';' after expression.")
     return new Stmt.Expression(expr)
   }
 
+
   // ---------- Expression ----------
 
   private expression(): Expr.Expr {
-    return this.equality()
+    return this.assignment()
+  }
+
+  private assignment(): Expr.Expr {
+    const expr: Expr.Expr = this.equality()
+
+    if (this.match(TT.EQUAL)) {
+      const equals: Token = this.previous()
+      const value: Expr.Expr = this.assignment()
+
+      if (expr instanceof Expr.Variable) {
+        const name: Token = expr.name
+        return new Expr.Assign(name, value)
+      }
+
+      this.error(equals, 'Invalid assignment target.')
+    }
+
+    return expr
+  }
+
+  private declaration(): Stmt.Stmt | null {
+    try {
+      if (this.match(TT.VAR)) return this.varDeclaration()
+
+      return this.statement()
+    } catch (error) {
+      this.synchronize()
+      // return null
+      console.error(error)
+      throw error
+    }
   }
 
   private equality(): Expr.Expr {
@@ -169,6 +226,10 @@ export default class Parser {
     if (this.match(TT.NUMBER, TT.STRING)) {
       const previous = this.previous()
       return new Expr.Literal(previous.literal)
+    }
+
+    if (this.match(TT.IDENTIFIER)) {
+      return new Expr.Variable(this.previous())
     }
 
     if (this.match(TT.LEFT_PAREN)) {

@@ -1,3 +1,6 @@
+import { Expr } from './expr'
+import { Stmt } from './stmt'
+
 export const enum TokenType {
   // Single-character tokens.
   LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,

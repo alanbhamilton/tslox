@@ -5,15 +5,32 @@ import Token from './token'
 import { LiteralObj } from './types'
 
 export interface IVisitor<R> {
+  visitAssignExpr(expr: Assign): R
   visitBinaryExpr(expr: Binary): R
   visitGroupingExpr(expr: Grouping): R
   visitLiteralExpr(expr: Literal): R
   visitUnaryExpr(expr: Unary): R
   visitTernaryExpr(expr: Ternary): R
+  visitVariableExpr(expr: Variable): R
 }
 
 export abstract class Expr {
   abstract accept<R>(visitor: IVisitor<R>): R
+}
+
+// The AST classes.
+export class Assign implements Expr {
+  public name: Token
+  public value: Expr
+
+  constructor(name: Token, value: Expr) {
+    this.name = name
+    this.value = value
+  }
+
+  accept<R>(visitor: IVisitor<R>): R {
+    return visitor.visitAssignExpr(this)
+  }
 }
 
 export class Binary implements Expr {
@@ -86,3 +103,14 @@ export class Ternary implements Expr {
   }
 }
 
+export class Variable implements Expr {
+  public name: Token
+
+  constructor(name: Token) {
+    this.name = name
+  }
+
+  accept<R>(visitor: IVisitor<R>): R {
+    return visitor.visitVariableExpr(this)
+  }
+}

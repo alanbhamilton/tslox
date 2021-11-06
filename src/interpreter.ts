@@ -4,8 +4,17 @@ import { TokenType as TT, LiteralObj } from './types'
 import Token from './token'
 import { RuntimeError } from './errors'
 import Lox from './lox'
+import Environment from './environment'
 
 export default class Interpreter implements Expr.IVisitor<LiteralObj>, Stmt.IVisitor<void> {
+  private environment: Environment = new Environment()
+
+  visitAssignExpr(expr: Expr.Assign): LiteralObj {
+    const value: LiteralObj = this.evaluate(expr.value)
+    this.environment.assign(expr.name, value)
+    return value
+  }
+
   interpret(statements: Stmt.Stmt[] ): void  {
     try {
       for (const statement of statements) {
@@ -25,6 +34,15 @@ export default class Interpreter implements Expr.IVisitor<LiteralObj>, Stmt.IVis
   visitPrintStmt(stmt: Stmt.Print): void {
     const value: LiteralObj = this.evaluate(stmt.expression)
     console.log(this.stringify(value))
+  }
+
+  visitVarStmt(stmt: Stmt.Var): void {
+    let value: LiteralObj = null
+    if (stmt.initializer !== null) {
+      value = this.evaluate(stmt.initializer)
+    }
+
+    this.environment.define(stmt.name.lexeme, value)
   }
 
   // ---------- Expression ----------
@@ -50,6 +68,10 @@ export default class Interpreter implements Expr.IVisitor<LiteralObj>, Stmt.IVis
 
     // Unreachable.
     return null
+  }
+
+  visitVariableExpr(expr: Expr.Variable): LiteralObj {
+    return this.environment.get(expr.name)
   }
 
   visitBinaryExpr(expr: Expr.Binary): LiteralObj {

@@ -8,12 +8,13 @@ const astDefinitions = {
   // Expressions
   Expr: {
     types: [
-      'Binary   : left Expr, operator Token, right Expr',
-      'Grouping : expression Expr',
-      'Literal  : value LiteralObj',
-      'Unary    : operator Token, right Expr',
-      'Ternary  : cond Expr, truthy Expr, falsy Expr',
-      "Variable : name Token"
+      'Assign   = name: Token, value: Expr',
+      'Binary   = left: Expr, operator: Token, right: Expr',
+      'Grouping = expression: Expr',
+      'Literal  = value: LiteralObj',
+      'Unary    = operator: Token, right: Expr',
+      'Ternary  = cond: Expr, truthy: Expr, falsy: Expr',
+      "Variable = name: Token"
     ],
     importStrings: [
       "import Token from './token'",
@@ -23,14 +24,13 @@ const astDefinitions = {
   // Statements
   Stmt: {
     types: [
-      'Expression : expression Expr',
-      'Print      : expression Expr',
-      'Var        : name Token, initializer Initializer'
+      'Expression = expression: Expr',
+      'Print      = expression: Expr',
+      'Var        = name: Token, initializer: Expr | null'
     ],
     importStrings: [
       "import Token from './token'",
-      "import { Expr } from './expr'",
-      "import { Initializer } from './types'"
+      "import { Expr } from './expr'"
     ]
   }
 }
@@ -70,7 +70,7 @@ export default class ASTGenerator {
 
   private defineVisitor(baseName: string, types: string[]): string {
     const visitors: string[] = types.map(type => {
-      const className = type.split(':')[0].trim()
+      const className = type.split('=')[0].trim()
       return `  visit${className}${baseName}(${baseName.toLowerCase()}: ${className}): R`
     })
 
@@ -79,8 +79,8 @@ export default class ASTGenerator {
 
   private defineClasses(baseName: string, types: string[]): string {
     const classes: string[] = types.map(type => {
-      const className = type.split(':')[0].trim()
-      const fields = type.split(':')[1].trim()
+      const className = type.split('=')[0].trim()
+      const fields = type.split('=')[1].trim()
       return this.defineClass(baseName, className, fields)
     })
 
@@ -88,7 +88,7 @@ export default class ASTGenerator {
   }
 
   private defineClass(baseName: string, className: string, fieldList: string): string {
-    const fields = fieldList.split(', ').map(field => field.split(' '))
+    const fields = fieldList.split(', ').map(field => field.split(': '))
 
     return astStrings.defineClass
       .replace(/{{baseName}}/g, baseName)
