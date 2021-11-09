@@ -1,6 +1,6 @@
 import * as Expr from './expr'
 import * as Stmt from './stmt'
-import { TokenType as TT, LiteralObj } from './types'
+import { TokenType as TT, LiteralObj, Nullable } from './types'
 import Token from './token'
 import { RuntimeError } from './errors'
 import Lox from './lox'
@@ -43,6 +43,10 @@ export default class Interpreter implements Expr.IVisitor<LiteralObj>, Stmt.IVis
     }
 
     this.environment.define(stmt.name.lexeme, value)
+  }
+
+  visitBlockStmt(stmt: Stmt.Block): void {
+    this.executeBlock(stmt.statements, new Environment(this.environment))
   }
 
   // ---------- Expression ----------
@@ -154,6 +158,19 @@ export default class Interpreter implements Expr.IVisitor<LiteralObj>, Stmt.IVis
 
   private execute(stmt: Stmt.Stmt): void {
     stmt.accept(this)
+  }
+
+  private executeBlock(statements: Nullable<Stmt.Stmt>[], environment: Environment): void {
+    const previous: Environment = this.environment
+    try {
+      this.environment = environment
+
+      for (const statement of statements) {
+        if (statement !== null) this.execute(statement)
+      }
+    } finally {
+      this.environment = previous
+    }
   }
 
   private isTruthy(object: LiteralObj): boolean {

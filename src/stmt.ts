@@ -3,8 +3,10 @@
 
 import Token from './token'
 import { Expr } from './expr'
+import { Nullable } from './types'
 
 export interface IVisitor<R> {
+  visitBlockStmt(stmt: Block): R
   visitExpressionStmt(stmt: Expression): R
   visitPrintStmt(stmt: Print): R
   visitVarStmt(stmt: Var): R
@@ -15,6 +17,18 @@ export abstract class Stmt {
 }
 
 // The AST classes.
+export class Block implements Stmt {
+  public statements: Nullable<Stmt>[]
+
+  constructor(statements: Nullable<Stmt>[]) {
+    this.statements = statements
+  }
+
+  accept<R>(visitor: IVisitor<R>): R {
+    return visitor.visitBlockStmt(this)
+  }
+}
+
 export class Expression implements Stmt {
   public expression: Expr
 
@@ -41,9 +55,9 @@ export class Print implements Stmt {
 
 export class Var implements Stmt {
   public name: Token
-  public initializer: Expr | null
+  public initializer: Nullable<Expr>
 
-  constructor(name: Token, initializer: Expr | null) {
+  constructor(name: Token, initializer: Nullable<Expr>) {
     this.name = name
     this.initializer = initializer
   }

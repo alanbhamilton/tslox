@@ -24,13 +24,15 @@ const astDefinitions = {
   // Statements
   Stmt: {
     types: [
+      'Block      = statements: Nullable<Stmt>[]',
       'Expression = expression: Expr',
       'Print      = expression: Expr',
-      'Var        = name: Token, initializer: Expr | null'
+      'Var        = name: Token, initializer: Nullable<Expr>'
     ],
     importStrings: [
       "import Token from './token'",
-      "import { Expr } from './expr'"
+      "import { Expr } from './expr'",
+      "import { Nullable } from './types'"
     ]
   }
 }

@@ -72,3 +72,5 @@ export const tokenTypeNames: Map<TokenType, string> = new Map([
 ])
 
 export type LiteralObj = Object | null
+
+export type Nullable<T> = T | null

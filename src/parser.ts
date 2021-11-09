@@ -1,5 +1,5 @@
 import Lox from "./lox"
-import { TokenType as TT } from "./types"
+import { TokenType as TT, Nullable } from "./types"
 import Token from "./token"
 import * as Expr from './expr'
 import * as Stmt from './stmt'
@@ -13,7 +13,10 @@ import { ParseError } from './errors'
 // varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
 //
 // statement      → exprStmt
-//                | printStmt ;
+//                | printStmt
+//                | block ;
+//
+// block          → "{" declaration* "}" ;
 
 
 // exprStmt       → expression ";" ;
@@ -51,7 +54,7 @@ export default class Parser {
   }
 
   parse(): Stmt.Stmt[] {
-    const statements: (Stmt.Stmt | null)[] = []
+    const statements: Nullable<Stmt.Stmt>[] = []
     while (!this.isAtEnd()) {
       statements.push(this.declaration())
     }
@@ -63,6 +66,7 @@ export default class Parser {
 
   private statement(): Stmt.Stmt {
     if (this.match(TT.PRINT)) return this.printStatement()
+    if (this.match(TT.LEFT_BRACE)) return new Stmt.Block(this.block())
 
     return this.expressionStatement()
   }
@@ -91,6 +95,16 @@ export default class Parser {
     return new Stmt.Expression(expr)
   }
 
+  private block(): Nullable<Stmt.Stmt>[] {
+    const statements: Nullable<Stmt.Stmt>[] = []
+
+    while (!this.check(TT.RIGHT_BRACE) && !this.isAtEnd()) {
+      statements.push(this.declaration())
+    }
+
+    this.consume(TT.RIGHT_BRACE, "Expect '}' after block.")
+    return statements
+  }
 
   // ---------- Expression ----------
 

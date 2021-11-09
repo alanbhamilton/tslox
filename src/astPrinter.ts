@@ -1,6 +1,7 @@
 import * as Expr from './expr'
 import * as Stmt from './stmt'
 import Token from './token'
+import { Nullable } from './types'
 
 export default class AstPrinter implements Expr.IVisitor<string>, Stmt.IVisitor<string> {
 
@@ -16,6 +17,10 @@ export default class AstPrinter implements Expr.IVisitor<string>, Stmt.IVisitor<
 
   public visitPrintStmt(stmt: Stmt.Print): string {
     return this.parenthesizeExprs('print', stmt.expression)
+  }
+
+  public visitBlockStmt(stmt: Stmt.Block): string {
+    return this.parenthesizeBlock('block', stmt.statements)
   }
 
   // ---------- Expression ----------
@@ -77,6 +82,20 @@ export default class AstPrinter implements Expr.IVisitor<string>, Stmt.IVisitor<
         result += ' null'
       } else {
         result += ` ${expr.accept(this)}`
+      }
+    })
+    result += ')'
+    return result
+  }
+
+  public parenthesizeBlock(name: string, statements: Nullable<Stmt.Stmt>[]) {
+    let result = `(${name}\n`
+
+    statements.forEach(statement => {
+      if (statement === null) {
+        result += 'null'
+      } else {
+        result += `${statement.accept(this)}\n`
       }
     })
     result += ')'
